@@ -1,6 +1,6 @@
 #Vagrant + Docker environment for Spark standalone testing
 
-This environment will allow us to run Spark on a standalone environment configurated using:
+This environment will allow us to run Apache Spark on a standalone environment configured using:
  - Vagrant
  - Docker
  - [prodriguezdefino/sparkstandalone:1.2.0](https://github.com/prodriguezdefino/docker-spark-standalone)
