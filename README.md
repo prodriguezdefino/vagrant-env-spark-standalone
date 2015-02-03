@@ -33,6 +33,20 @@ this will calculate an approximation of Pi (the old "throwing darts calculus" ex
 
 If everything went smoot we can move to something more interesting.
 
+## Networking inside an corporate environment (proxy servers)
+
+The images as they are won't work inside a proxy'ed environment unless they get proper configuration when running them, there are two things to consider: first the skydns should be able to access a nameserver (anyone will do the job) so if there is a nameserver configured on your network use that (cat /etc/resolv.conf in OSX for example will reveal the needed information), and secondly each container that need access to the internet should be ran using the ```-e "prop_key=prop_value"``` flag in order to configure environment variables (and with that set the ```http_proxy``` and ```https_proxy``` variables).
+
+A modification of the Vagrant provision script can be made using then:
+```
+...
+docker run -d -p $DOCKER0_IP:53:53/udp --name skydns crosbymichael/skydns -nameserver <corporate_nameserver_ip>:53 -domain docker
+...
+docker run -itd --name=master -h master.sparkmaster.dev.docker -p 8080:8080 -p 50070:50070 -e "http_proxy=<corporate_proxy_server:port>" -e "https_proxy=<corporate_proxy_server:port>" --dns=$DNS_IP prodriguezdefino/sparkmaster:1.2.0
+...
+```
+Note that the nameserver values and specific proxy config names/ports should be corrected in each case.
+
 ## Testing Spark with a CSV dataset
 
 In the [hadoopbase](https://github.com/prodriguezdefino/docker-hadoop-base) image we added to the Docker container's filesystem a set of CSV files that contains the historical information of the MLB player's statistics from 1930's to 2013. It is not a big dataset (that worth for use this platform), but indeed it will help as an example for this tutorial. Since our Spark image is built based on the Hadoop image the files are available in the filesystem for free.
